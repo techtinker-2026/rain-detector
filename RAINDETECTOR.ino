@@ -31,7 +31,7 @@ void loop() {
     lcd.setCursor(0,0);
     lcd.print("RAIN DETECTED");
     lcd.setCursor(0,1);
-    lcd.print("Take Umbrella");
+    lcd.print("Raining");
 
   } 
   else {
