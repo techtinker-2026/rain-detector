@@ -1,30 +1,49 @@
-#include <SoftwareSerial.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
 
-SoftwareSerial BT(10, 11); // RX, TX
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+int rainPin = 2;
+int buzzer = 8;
 
 void setup() {
+  pinMode(rainPin, INPUT);
+  pinMode(buzzer, OUTPUT);
 
-  Serial.begin(115200); // PC Serial Monitor
-  BT.begin(115200);       // HC-05 normal baud rate
+  lcd.init();
+  lcd.backlight();
 
-  Serial.println("Bluetooth Chat Ready");
+  lcd.setCursor(0,0);
+  lcd.print("Rain Detector");
+  delay(2000);
+  lcd.clear();
 }
 
 void loop() {
 
-  // 📱 Phone → HC-05 → Arduino → Serial Monitor
-  if (BT.available()) {
+  int rain = digitalRead(rainPin);
 
-    char data = BT.read();
+  if (rain == LOW) {
 
-    Serial.write(data); // print on Serial Monitor
+    digitalWrite(buzzer, HIGH);
+
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("RAIN DETECTED");
+    lcd.setCursor(0,1);
+    lcd.print("Take Umbrella");
+
+  } 
+  else {
+
+    digitalWrite(buzzer, LOW);
+
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("No Rain");
+    lcd.setCursor(0,1);
+    lcd.print("Weather Clear");
   }
 
-  // 💻 Serial Monitor → Arduino → HC-05 → Phone
-  if (Serial.available()) {
-
-    char data = Serial.read();
-
-    BT.write(data); // send to phone
-  }
+  delay(500);
 }
